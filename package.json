@@ -9,6 +9,7 @@
         "undeploy": "cf undeploy Empleados --delete-services --delete-service-keys"
     },
     "devDependencies": {
+        "@sapui5/ts-types": "^1.99.1",
         "mbt": "^1.0.15",
         "rimraf": "3.0.0"
     }
