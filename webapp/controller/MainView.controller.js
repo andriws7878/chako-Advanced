@@ -101,7 +101,23 @@ sap.ui.define([
         };
 
         function showOrders(oEvent){
-            var ordersTable = this.getView().byId("ordersTable");
+
+            //Get selected controller
+            var iconPressed = oEvent.getSource();
+            
+            //Context from the model
+            var oContext = iconPressed.getBindingContext("jsonEmployees");
+            if(!this._DialogOrders){
+                this._DialogOrders = sap.ui.xmlfragment("chakoapp.employees.fragment.DialogOrders", this);
+                this.getView().addDependent(this._DialogOrders);
+            };
+
+            //Dialog binding to the Context to have access to the data of select item
+            this._DialogOrders.bindElement("jsonEmployees>" + oContext.getPath());
+            this._DialogOrders.open();
+            
+
+            /*var ordersTable = this.getView().byId("ordersTable");
             ordersTable.destroyItems();
 
             var itemPressed = oEvent.getSource();
@@ -176,10 +192,14 @@ sap.ui.define([
 
             newTableJSON.bindAggregation("items", oBindingInfo); 
             newTableJSON.bindElement("jsonEmployees>" + oContext.getPath());
-            ordersTable.addItem(newTableJSON);
+            ordersTable.addItem(newTableJSON);*/
         };
 
-        var Main = Controller.extend("andriws.Employees.controller.MainView", {});
+        function onCloseOrders(){
+            this._DialogOrders.close();
+        }
+
+        var Main = Controller.extend("chakoapp.employees.controller.MainView", {});
 
         Main.prototype.onValidate = function () {
             var inputEmpleyee = this.byId("inputEmpleyee");
@@ -203,5 +223,6 @@ sap.ui.define([
         Main.prototype.onShowCity = onShowCity;
         Main.prototype.onHideCity = onHideCity;
         Main.prototype.showOrders = showOrders;
+        Main.prototype.onCloseOrders = onCloseOrders;
         return Main;
     });
