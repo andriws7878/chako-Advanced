@@ -12,46 +12,7 @@ sap.ui.define([
         "use strict";
 
         function onInit() {
-            var oJSONModelEmpl = new sap.ui.model.json.JSONModel();
-            var oJSONModelCountries = new sap.ui.model.json.JSONModel();
-            var oView = this.getView();
-            var i18nBundle = oView.getModel("i18n").getResourceBundle();
-            /*var oJSON = {
-                employeeId: "12345",
-                countryKey: "UK",
-                listCountry: [
-                    {
-                        key: "US",
-                        text: i18nBundle.getText("countryUS")
-                    },
-                    {
-                        key: "UK",
-                        text: i18nBundle.getText("countryUK")
-                    },
-                    {
-                        key: "ES",
-                        text: i18nBundle.getText("countryES")
-                    }
-                ]
-            };
-            oJSONModel.setData(oJSON);*/
-            oJSONModelEmpl.loadData("./localService/mockdata/Employees.json", false);
-            oJSONModelCountries.loadData("./localService/mockdata/Countries.json", false);
-            /*oJSONModel.attachRequestCompleted(function(oEventModel){
-                console.log(JSON.stringify(oJSONModel.getData()));
-            });*/
-            oView.setModel(oJSONModelEmpl, "jsonEmployees");
-            oView.setModel(oJSONModelCountries, "jsonCoutries");
-
-            var oJSONModelConfig = new sap.ui.model.json.JSONModel({
-                visibleID: true,
-                visibleName: true,
-                visibleCountry: true,
-                visibleCity: false,
-                visibleBtnShowCity: true,
-                visibleBtnHideCity: false
-            });
-            oView.setModel(oJSONModelConfig, "jsonConfig");
+            this._bus = sap.ui.getCore().getEventBus();
         };
 
         function onFilter() {
@@ -197,9 +158,14 @@ sap.ui.define([
 
         function onCloseOrders(){
             this._DialogOrders.close();
-        }
+        };
 
-        var Main = Controller.extend("chakoapp.employees.controller.MainView", {});
+        function showEmployee(oEvent){
+            var path = oEvent.getSource().getBindingContext("jsonEmployees").getPath();
+            this._bus.publish("flexible", "showEmployee", path);
+        };
+
+        var Main = Controller.extend("chakoapp.employees.controller.MasterEmployee", {});
 
         Main.prototype.onValidate = function () {
             var inputEmpleyee = this.byId("inputEmpleyee");
@@ -224,5 +190,6 @@ sap.ui.define([
         Main.prototype.onHideCity = onHideCity;
         Main.prototype.showOrders = showOrders;
         Main.prototype.onCloseOrders = onCloseOrders;
+        Main.prototype.showEmployee = showEmployee;
         return Main;
     });
