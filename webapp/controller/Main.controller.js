@@ -1,10 +1,11 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
+    "sap/ui/model/FilterOperator",
+    "sap/m/MessageBox"
 ],
 
-    function (Controller, Filter, FilterOperator) {
+    function (Controller, Filter, FilterOperator, MessageBox) {
         return Controller.extend("chakoapp.employees.controller.Main", {
 
             onBeforeRendering: function () {
@@ -106,7 +107,8 @@ sap.ui.define([
                     this.getView().getModel("incidenceModel").create("/IncidentsSet", body, {
                         success: function () {
                             this.onReadODataIncidence.bind(this)(employeeId);
-                            sap.m.MessageToast.show(oResourceBundle.getText("odataSaveOK"));
+                            MessageBox.success(oResourceBundle.getText("odataSaveOK"));
+                            //sap.m.MessageToast.show(oResourceBundle.getText("odataSaveOK"));
                         }.bind(this),
                         error: function (e) {
                             sap.m.MessageToast.show(oResourceBundle.getText("odataSaveKO"));
@@ -152,6 +154,8 @@ sap.ui.define([
                         tableIncidence.removeAllContent();
 
                         for (var incidence in data.results) {
+                            data.results[incidence]._ValidateDate = true;
+                            data.results[incidence].EnabledSave = false;
                             var newIncidence = sap.ui.xmlfragment("chakoapp.employees.fragment.NewIncidence", this._detailEmployeeView.getController());
                             this._detailEmployeeView.addDependent(newIncidence);
                             newIncidence.bindElement("incidenceModel>/" + incidence);
